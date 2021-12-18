@@ -33,8 +33,8 @@ cd "${boringssl_dir}"
 git fetch --depth 1 origin ${boringssl_commit}
 git checkout FETCH_HEAD
 
-mkdir ${boringssl_build_dir}
-cd ${boringssl_build_dir}
+mkdir "${boringssl_build_dir}"
+cd "${boringssl_build_dir}"
 cmake -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 `
       -DCMAKE_POSITION_INDEPENDENT_CODE=ON `
       -DCMAKE_POLICY_DEFAULT_CMP0091:STRING=NEW `
@@ -47,16 +47,16 @@ cmake -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 `
 cmake --build . --config Release --parallel ${NPROC} --target ssl crypto
 cmake --build . --config Debug --parallel ${NPROC} --target ssl crypto
 
-cmake -E copy_directory ..\include                ${install_dir}\Release\include
-cmake -E copy           ssl\Release\ssl.lib       ${install_dir}\Release\lib\ssl.lib
-cmake -E copy           crypto\Release\crypto.lib ${install_dir}\Release\lib\crypto.lib
+cmake -E copy_directory ..\include                "${install_dir}\Release\include"
+cmake -E copy           ssl\Release\ssl.lib       "${install_dir}\Release\lib\ssl.lib"
+cmake -E copy           crypto\Release\crypto.lib "${install_dir}\Release\lib\crypto.lib"
 
-cmake -E copy_directory ..\include                ${install_dir}\Debug\include
-cmake -E copy           ssl\Debug\ssl.lib         ${install_dir}\Debug\lib\ssl.lib
-cmake -E copy           crypto\Debug\crypto.lib   ${install_dir}\Debug\lib\crypto.lib
+cmake -E copy_directory ..\include                "${install_dir}\Debug\include"
+cmake -E copy           ssl\Debug\ssl.lib         "${install_dir}\Debug\lib\ssl.lib"
+cmake -E copy           crypto\Debug\crypto.lib   "${install_dir}\Debug\lib\crypto.lib"
 
-cd ${script_dir}
-tar -C ${install_dir} -czvf ${tar_name} Release Debug
+cd "${script_dir}"
+tar -C "${install_dir}" -czvf "${tar_name}" Release Debug
 
 Remove-Dir "${boringssl_dir}"
 Remove-Dir "${install_dir}"
