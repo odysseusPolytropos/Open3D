@@ -39,8 +39,9 @@ std::string GetSHA256(const std::string& file_path);
 /// \param url File URL.
 /// \param data_root Open3D data root directory. See open3d::data::Dataset
 /// class for more information. If empty, the default data root is used.
-/// \param output_file_name Name of the downloaded file. If empty string is
-/// passed, the default file name will be used, extracted from the url.
+/// \param prefix The file will be downloaded to `data_root/prefix`.
+/// Typically we group data file by dataset, e.g., "kitti", "rgbd", etc. If
+/// empty, the file will be downloaded to `data_root` directly.
 /// \param always_download If `false`, it will skip download if the file is
 /// present in the given location with given file name and expected SHA256SUM.
 /// It will trigger download if these conditions are not met. If `true`, it will
@@ -52,7 +53,7 @@ std::string GetSHA256(const std::string& file_path);
 /// \param print_progress Display progress bar for download.
 bool DownloadFromURL(const std::string& url,
                      const std::string& data_root = "",
-                     const std::string& output_file_name = "",
+                     const std::string& prefix = "",
                      const bool always_download = true,
                      const std::string& sha256 = "",
                      const bool print_progress = false);

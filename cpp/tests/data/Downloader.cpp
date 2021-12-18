@@ -52,7 +52,7 @@ TEST(Downloader, DownloadAndVerify) {
     // with the original file name extracted from the url,
     // `always_download` is True : If exists, it will be over-written.
     // SHA256 is not verified.
-    EXPECT_TRUE(data::DownloadFromURL(url));
+    EXPECT_TRUE(data::DownloadFromURL(url, ""));
     EXPECT_TRUE(data::DownloadFromURL(url, "", "", false, expected_sha256));
 }
 

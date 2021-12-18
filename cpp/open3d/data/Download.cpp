@@ -102,41 +102,34 @@ static size_t WriteDataCb(void* ptr, size_t size, size_t nmemb, FILE* stream) {
     return written;
 }
 
-static std::string GetAbsoluteFilePath(const std::string& url,
-                                       const std::string& output_file_path,
-                                       const std::string& output_file_name) {
-    std::string file_name;
-    if (output_file_name.empty()) {
-        file_name = utility::filesystem::GetFileNameWithoutDirectory(url);
-    } else {
-        file_name = output_file_name;
+static std::string ResolveFilePath(const std::string& url,
+                                   const std::string& data_root,
+                                   const std::string& prefix) {
+    std::string file_name =
+            utility::filesystem::GetFileNameWithoutDirectory(url);
+
+    std::string file_dir = data_root.empty() ? LocateDataRoot() : data_root;
+    if (!prefix.empty()) {
+        file_dir += "/" + prefix;
     }
 
-    std::string file_path;
-    if (output_file_path.empty()) {
-        file_path = LocateDataRoot();
-    } else {
-        file_path = output_file_path;
-    }
-
-    // It will create the directory hierarchy if not present.
-    if (!utility::filesystem::DirectoryExists(file_path)) {
-        utility::filesystem::MakeDirectoryHierarchy(file_path);
-    }
-
-    file_path = file_path + '/' + file_name;
-    return file_path;
+    return file_dir + "/" + file_name;
 }
 
 bool DownloadFromURL(const std::string& url,
                      const std::string& data_root,
-                     const std::string& output_file_name,
+                     const std::string& prefix,
                      const bool always_download,
                      const std::string& sha256,
                      const bool print_progress) {
-    // Get absolute file-path, from inputs.
-    std::string file_path =
-            GetAbsoluteFilePath(url, data_root, output_file_name);
+    const std::string file_path = ResolveFilePath(url, data_root, prefix);
+    const std::string file_dir =
+            utility::filesystem::GetFileParentDirectory(file_path);
+    if (!utility::filesystem::DirectoryExists(file_dir)) {
+        utility::filesystem::MakeDirectoryHierarchy(file_dir);
+    }
+
+    utility::LogInfo("file_path: {}", file_path);
 
     // Check and skip download if required.
     if (!always_download && utility::filesystem::FileExists(file_path)) {
