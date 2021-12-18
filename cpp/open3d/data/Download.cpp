@@ -129,14 +129,14 @@ static std::string GetAbsoluteFilePath(const std::string& url,
 }
 
 bool DownloadFromURL(const std::string& url,
-                     const std::string& output_file_path,
+                     const std::string& data_root,
                      const std::string& output_file_name,
                      const bool always_download,
                      const std::string& sha256,
                      const bool print_progress) {
     // Get absolute file-path, from inputs.
     std::string file_path =
-            GetAbsoluteFilePath(url, output_file_path, output_file_name);
+            GetAbsoluteFilePath(url, data_root, output_file_name);
 
     // Check and skip download if required.
     if (!always_download && utility::filesystem::FileExists(file_path)) {
@@ -161,7 +161,7 @@ bool DownloadFromURL(const std::string& url,
     CURLcode res;
 
     curl_version_info_data* ver = curl_version_info(CURLVERSION_NOW);
-    utility::LogInfo("libcurl ssl_version: {}", ver->ssl_version);
+    utility::LogDebug("libcurl ssl_version: {}", ver->ssl_version);
 
     // Initialize Curl.
     curl = curl_easy_init();

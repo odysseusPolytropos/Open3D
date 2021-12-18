@@ -36,10 +36,9 @@ namespace data {
 std::string GetSHA256(const std::string& file_path);
 
 /// \brief Function to download the file from URL.
-/// \param url URL for the file to be downloaded.
-/// \param output_file_path Custom directory to download the file. If
-/// directory does not exists, it will be created. If empty string is
-/// passed, the default data-root will be used.
+/// \param url File URL.
+/// \param data_root Open3D data root directory. See open3d::data::Dataset
+/// class for more information. If empty, the default data root is used.
 /// \param output_file_name Name of the downloaded file. If empty string is
 /// passed, the default file name will be used, extracted from the url.
 /// \param always_download If `false`, it will skip download if the file is
@@ -52,7 +51,7 @@ std::string GetSHA256(const std::string& file_path);
 /// parameter.
 /// \param print_progress Display progress bar for download.
 bool DownloadFromURL(const std::string& url,
-                     const std::string& output_file_path = "",
+                     const std::string& data_root = "",
                      const std::string& output_file_name = "",
                      const bool always_download = true,
                      const std::string& sha256 = "",
