@@ -24,8 +24,7 @@
 // IN THE SOFTWARE.
 // ----------------------------------------------------------------------------
 
-#include "open3d/data/Downloader.h"
-
+#include "open3d/data/Download.h"
 #include "open3d/utility/FileSystem.h"
 #include "open3d/utility/Helper.h"
 #include "open3d/utility/Logging.h"
