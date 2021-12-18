@@ -120,16 +120,13 @@ bool DownloadFromURL(const std::string& url,
                      const std::string& sha256,
                      const std::string& data_root,
                      const std::string& prefix,
-                     const bool always_download,
-                     const bool print_progress) {
+                     const bool always_download) {
     const std::string file_path = ResolveFilePath(url, data_root, prefix);
     const std::string file_dir =
             utility::filesystem::GetFileParentDirectory(file_path);
     if (!utility::filesystem::DirectoryExists(file_dir)) {
         utility::filesystem::MakeDirectoryHierarchy(file_dir);
     }
-
-    utility::LogInfo("file_path: {}", file_path);
 
     // Check and skip download if required.
     if (!always_download && utility::filesystem::FileExists(file_path)) {
@@ -175,16 +172,6 @@ bool DownloadFromURL(const std::string& url,
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteDataCb);
         // Pass file-handler to which the data will be written.
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-
-        // Progress bar options.
-        if (print_progress) {
-            // TODO: Add Open3D progress-bar option.
-            // curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION,
-            //                  download_progress_callback);
-            // curl_easy_setopt(curl, CURLOPT_XFERINFODATA,
-            //                  static_cast<void*>(&progress_bar));
-            // curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
-        }
 
         // Perform a file transfer synchronously.
         res = curl_easy_perform(curl);

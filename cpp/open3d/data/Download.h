@@ -35,7 +35,8 @@ namespace data {
 /// \param file_path Path to the file.
 std::string GetSHA256(const std::string& file_path);
 
-/// \brief Function to download the file from URL.
+/// \brief Download a file from URL.
+///
 /// \param url File URL.
 /// \param sha256 SHA256 checksum of the file. This is required as the same
 /// URL may point to different files over time.
@@ -48,14 +49,13 @@ std::string GetSHA256(const std::string& file_path);
 /// present in the given location with given file name and expected SHA256SUM.
 /// It will trigger download if these conditions are not met. If `true`, it will
 /// always trigger download and over-write the file if present. Default: `true`.
-
-/// \param print_progress Display progress bar for download.
+///
+/// TODO: print_progress
 bool DownloadFromURL(const std::string& url,
                      const std::string& sha256,
                      const std::string& data_root = "",
                      const std::string& prefix = "",
-                     const bool always_download = true,
-                     const bool print_progress = false);
+                     const bool always_download = true);
 
 }  // namespace data
 }  // namespace open3d
