@@ -37,6 +37,8 @@ std::string GetSHA256(const std::string& file_path);
 
 /// \brief Function to download the file from URL.
 /// \param url File URL.
+/// \param sha256 SHA256 checksum of the file. This is required as the same
+/// URL may point to different files over time.
 /// \param data_root Open3D data root directory. See open3d::data::Dataset
 /// class for more information. If empty, the default data root is used.
 /// \param prefix The file will be downloaded to `data_root/prefix`.
@@ -46,10 +48,7 @@ std::string GetSHA256(const std::string& file_path);
 /// present in the given location with given file name and expected SHA256SUM.
 /// It will trigger download if these conditions are not met. If `true`, it will
 /// always trigger download and over-write the file if present. Default: `true`.
-/// \param sha256 SHA256SUM HASH value to verify the file after download. If
-/// empty string is passed, the verification will be skipped. If
-/// `always_download` is set to `false`, then it `SHA256` is a required
-/// parameter.
+
 /// \param print_progress Display progress bar for download.
 bool DownloadFromURL(const std::string& url,
                      const std::string& sha256,
