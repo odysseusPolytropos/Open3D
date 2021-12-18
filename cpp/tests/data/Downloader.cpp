@@ -38,22 +38,23 @@ TEST(Downloader, DownloadAndVerify) {
     std::string url =
             "https://github.com/isl-org/open3d_downloads/releases/download/"
             "data-manager/test_data_00.zip";
-    std::string expected_sha256 =
+    std::string sha256 =
             "66ea466a02532d61dbc457abf1408afeab360d7a35e15f1479ca91c25e838d30";
 
     // Downloader API.
     // URL is the only compulsory input, others are optional, and passing
     // empty string "", trigers the default behaviour.
     // open3d::data::DownloadFromURL(url, output_file_name, output_file_path,
-    //                               always_download, expected_sha256);
+    //                               always_download, sha256);
 
     // Default.
     // Download in Open3D Data Root directory,
     // with the original file name extracted from the url,
     // `always_download` is True : If exists, it will be over-written.
     // SHA256 is not verified.
-    EXPECT_TRUE(data::DownloadFromURL(url, ""));
-    EXPECT_TRUE(data::DownloadFromURL(url, "", "", false, expected_sha256));
+    EXPECT_TRUE(data::DownloadFromURL(url, sha256));
+    EXPECT_FALSE(data::DownloadFromURL(url, "wrong sha256"));
+    EXPECT_TRUE(data::DownloadFromURL(url, sha256, "", "", false));
 }
 
 }  // namespace tests

@@ -52,10 +52,10 @@ std::string GetSHA256(const std::string& file_path);
 /// parameter.
 /// \param print_progress Display progress bar for download.
 bool DownloadFromURL(const std::string& url,
+                     const std::string& sha256,
                      const std::string& data_root = "",
                      const std::string& prefix = "",
                      const bool always_download = true,
-                     const std::string& sha256 = "",
                      const bool print_progress = false);
 
 }  // namespace data

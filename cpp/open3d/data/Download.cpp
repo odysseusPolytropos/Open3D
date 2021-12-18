@@ -117,10 +117,10 @@ static std::string ResolveFilePath(const std::string& url,
 }
 
 bool DownloadFromURL(const std::string& url,
+                     const std::string& sha256,
                      const std::string& data_root,
                      const std::string& prefix,
                      const bool always_download,
-                     const std::string& sha256,
                      const bool print_progress) {
     const std::string file_path = ResolveFilePath(url, data_root, prefix);
     const std::string file_dir =
