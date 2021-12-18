@@ -109,18 +109,17 @@ static std::string ResolveFilePath(const std::string& url,
             utility::filesystem::GetFileNameWithoutDirectory(url);
 
     std::string file_dir = data_root.empty() ? LocateDataRoot() : data_root;
-    if (!prefix.empty()) {
-        file_dir += "/" + prefix;
+    if (prefix.empty()) {
+        utility::LogError("Download prefix cannot be empty.");
     }
 
-    return file_dir + "/" + file_name;
+    return file_dir + "/" + prefix + "/" + file_name;
 }
 
 bool DownloadFromURL(const std::string& url,
                      const std::string& sha256,
-                     const std::string& data_root,
                      const std::string& prefix,
-                     const bool always_download) {
+                     const std::string& data_root) {
     const std::string file_path = ResolveFilePath(url, data_root, prefix);
     const std::string file_dir =
             utility::filesystem::GetFileParentDirectory(file_path);
@@ -128,30 +127,18 @@ bool DownloadFromURL(const std::string& url,
         utility::filesystem::MakeDirectoryHierarchy(file_dir);
     }
 
-    // Check and skip download if required.
-    if (!always_download && utility::filesystem::FileExists(file_path)) {
-        if (!sha256.empty()) {
-            const std::string actual_hash = GetSHA256(file_path.c_str());
-            if (sha256 == actual_hash) {
-                utility::LogDebug(
-                        "Downloading Skipped. File already present with "
-                        "expected SHA256 hash.");
-                return true;
-            }
-        } else {
-            utility::LogError(
-                    "Setting always_download to false, requires SHA256 "
-                    "value, to verify the existing file.");
-        }
+    // Check and skip download.
+    if (utility::filesystem::FileExists(file_path) &&
+        GetSHA256(file_path) == sha256) {
+        utility::LogInfo("{} exists and SHA256 matches. Skipped downloading.",
+                         file_path);
+        return true;
     }
 
     // Download mechanism.
     CURL* curl;
     FILE* fp;
     CURLcode res;
-
-    curl_version_info_data* ver = curl_version_info(CURLVERSION_NOW);
-    utility::LogDebug("libcurl ssl_version: {}", ver->ssl_version);
 
     // Initialize Curl.
     curl = curl_easy_init();
@@ -184,8 +171,8 @@ bool DownloadFromURL(const std::string& url,
         if (res == CURLE_OK) {
             // Verify SHA256 value.
             if (!sha256.empty()) {
-                const std::string actual_hash = GetSHA256(file_path.c_str());
-                if (sha256 == actual_hash) {
+                const std::string actual_sha256 = GetSHA256(file_path);
+                if (sha256 == actual_sha256) {
                     utility::LogDebug(
                             "Downloaded file {} with expected SHA256 hash.",
                             file_path);
@@ -194,7 +181,7 @@ bool DownloadFromURL(const std::string& url,
                     utility::LogWarning(
                             "SHA256 hash mismatch for file {}.\n Expected: "
                             "{}.\n Actual: {}.",
-                            file_path, sha256, actual_hash);
+                            file_path, sha256, actual_sha256);
                     return false;
                 }
             }
@@ -212,7 +199,7 @@ bool DownloadFromURL(const std::string& url,
         utility::LogWarning("Failed to initialize CURL.");
         return false;
     }
-}
+}  // namespace data
 
 }  // namespace data
 }  // namespace open3d

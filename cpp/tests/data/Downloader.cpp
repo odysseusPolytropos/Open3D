@@ -24,6 +24,7 @@
 // IN THE SOFTWARE.
 // ----------------------------------------------------------------------------
 
+#include "open3d/data/Dataset.h"
 #include "open3d/data/Download.h"
 #include "open3d/utility/FileSystem.h"
 #include "open3d/utility/Helper.h"
@@ -34,27 +35,39 @@ namespace open3d {
 namespace tests {
 
 TEST(Downloader, DownloadAndVerify) {
-    // File 1.
     std::string url =
             "https://github.com/isl-org/open3d_downloads/releases/download/"
             "data-manager/test_data_00.zip";
     std::string sha256 =
             "66ea466a02532d61dbc457abf1408afeab360d7a35e15f1479ca91c25e838d30";
 
-    // Downloader API.
-    // URL is the only compulsory input, others are optional, and passing
-    // empty string "", trigers the default behaviour.
-    // open3d::data::DownloadFromURL(url, output_file_name, output_file_path,
-    //                               always_download, sha256);
+    // Normal download.
+    std::string prefix = "test";
+    std::string file_dir = data::LocateDataRoot() + "/" + prefix;
 
-    // Default.
-    // Download in Open3D Data Root directory,
-    // with the original file name extracted from the url,
-    // `always_download` is True : If exists, it will be over-written.
-    // SHA256 is not verified.
-    EXPECT_TRUE(data::DownloadFromURL(url, sha256));
-    EXPECT_FALSE(data::DownloadFromURL(url, "wrong sha256"));
-    EXPECT_TRUE(data::DownloadFromURL(url, sha256, "", "", false));
+    utility::LogInfo("{} exists: {}", file_dir,
+                     utility::filesystem::DirectoryExists(file_dir));
+    if (utility::filesystem::DirectoryExists(file_dir)) {
+        if (!utility::filesystem::RemoveDirectory(file_dir)) {
+            utility::LogError("Failed to remove directory {}", file_dir);
+        }
+    }
+    EXPECT_FALSE(utility::filesystem::DirectoryExists(file_dir));
+    EXPECT_TRUE(data::DownloadFromURL(url, sha256, prefix));
+    EXPECT_TRUE(utility::filesystem::DirectoryExists(file_dir));
+    EXPECT_TRUE(
+            utility::filesystem::FileExists(file_dir + "/test_data_00.zip"));
+
+    // This download shall be skipped (look at the message).
+    EXPECT_TRUE(data::DownloadFromURL(url, sha256, prefix));
+
+    // Mismatch sha256.
+    EXPECT_FALSE(data::DownloadFromURL(url, "wrong_sha256", "test"));
+
+    // Clean up.
+    if (utility::filesystem::DirectoryExists(file_dir)) {
+        utility::filesystem::RemoveDirectory(file_dir);
+    }
 }
 
 }  // namespace tests
