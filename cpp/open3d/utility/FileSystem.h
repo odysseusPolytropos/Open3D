@@ -74,7 +74,7 @@ bool MakeDirectory(const std::string &directory);
 
 bool MakeDirectoryHierarchy(const std::string &directory);
 
-bool DeleteDirectory(const std::string &directory);
+bool RemoveDirectory(const std::string &directory);
 
 bool FileExists(const std::string &filename);
 

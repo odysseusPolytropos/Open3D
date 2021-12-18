@@ -47,6 +47,8 @@
 #include <unistd.h>
 #endif
 
+#include <experimental/filesystem>
+
 #include "open3d/utility/Logging.h"
 
 namespace open3d {
@@ -256,12 +258,15 @@ bool MakeDirectoryHierarchy(const std::string &directory) {
     return true;
 }
 
-bool DeleteDirectory(const std::string &directory) {
-#ifdef WINDOWS
-    return (_rmdir(directory.c_str()) == 0);
-#else
-    return (rmdir(directory.c_str()) == 0);
-#endif
+bool RemoveDirectory(const std::string &directory) {
+    std::error_code error;
+    if (std::experimental::filesystem::remove_all(directory, error) ==
+        static_cast<std::uintmax_t>(-1)) {
+        utility::LogWarning("Failed to remove directory {}: {}.", directory,
+                            error.message());
+        return false;
+    }
+    return true;
 }
 
 bool FileExists(const std::string &filename) {

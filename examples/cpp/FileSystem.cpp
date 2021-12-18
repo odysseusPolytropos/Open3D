@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
         std::cout << "mkdir " << (success ? "succeeded" : "failed")
                   << std::endl;
     } else if (function == "rmdir") {
-        bool success = DeleteDirectory(directory);
+        bool success = RemoveDirectory(directory);
         std::cout << "rmdir " << (success ? "succeeded" : "failed")
                   << std::endl;
     } else if (function == "rmfile") {

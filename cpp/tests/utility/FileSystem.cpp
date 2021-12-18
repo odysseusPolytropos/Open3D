@@ -259,7 +259,7 @@ TEST(FileSystem, ChangeWorkingDirectory) {
     status = utility::filesystem::ChangeWorkingDirectory("..");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test");
+    status = utility::filesystem::RemoveDirectory("test");
     EXPECT_TRUE(status);
 }
 
@@ -283,17 +283,17 @@ TEST(FileSystem, DirectoryExists) {
     status = utility::filesystem::DirectoryExists(path);
     EXPECT_TRUE(status);
 
-    // clean-up in reverse order, DeleteDirectory can delete one dir at a time.
+    // clean-up in reverse order, RemoveDirectory can delete one dir at a time.
     status = utility::filesystem::ChangeWorkingDirectory("test");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test_dir");
+    status = utility::filesystem::RemoveDirectory("test_dir");
     EXPECT_TRUE(status);
 
     status = utility::filesystem::ChangeWorkingDirectory("..");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test");
+    status = utility::filesystem::RemoveDirectory("test");
     EXPECT_TRUE(status);
 }
 
@@ -313,7 +313,7 @@ TEST(FileSystem, MakeDirectory) {
     status = utility::filesystem::MakeDirectory(path);
     EXPECT_FALSE(status);
 
-    status = utility::filesystem::DeleteDirectory("test");
+    status = utility::filesystem::RemoveDirectory("test");
     EXPECT_TRUE(status);
 }
 
@@ -328,24 +328,24 @@ TEST(FileSystem, MakeDirectoryHierarchy) {
     status = utility::filesystem::MakeDirectoryHierarchy(path);
     EXPECT_TRUE(status);
 
-    // clean-up in reverse order, DeleteDirectory can delete one dir at a time.
+    // clean-up in reverse order, RemoveDirectory can delete one dir at a time.
     status = utility::filesystem::ChangeWorkingDirectory("test");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test_dir");
+    status = utility::filesystem::RemoveDirectory("test_dir");
     EXPECT_TRUE(status);
 
     status = utility::filesystem::ChangeWorkingDirectory("..");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test");
+    status = utility::filesystem::RemoveDirectory("test");
     EXPECT_TRUE(status);
 }
 
 // ----------------------------------------------------------------------------
-// Note: DeleteDirectory can delete one dir at a time.
+// Note: RemoveDirectory can delete one dir at a time.
 // ----------------------------------------------------------------------------
-TEST(FileSystem, DeleteDirectory) {
+TEST(FileSystem, RemoveDirectory) {
     std::string path = "test";
 
     bool status;
@@ -353,11 +353,18 @@ TEST(FileSystem, DeleteDirectory) {
     status = utility::filesystem::MakeDirectory(path);
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory(path);
+    status = utility::filesystem::MakeDirectory(path + "/sub_dir");
+    EXPECT_TRUE(status);
+    FILE *file = utility::filesystem::FOpen(path + "/file_name.txt", "w");
+    fclose(file);
+
+    status = utility::filesystem::RemoveDirectory(path);
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory(path);
-    EXPECT_FALSE(status);
+    // std::filesystem::remove_all() won't throw error if the directory doesn't
+    // exist.
+    status = utility::filesystem::RemoveDirectory(path);
+    EXPECT_TRUE(status);
 }
 
 TEST(FileSystem, File_Exists_Remove) {
@@ -387,17 +394,17 @@ TEST(FileSystem, File_Exists_Remove) {
     status = utility::filesystem::FileExists(fileName);
     EXPECT_FALSE(status);
 
-    // clean-up in reverse order, DeleteDirectory can delete one dir at a time.
+    // clean-up in reverse order, RemoveDirectory can delete one dir at a time.
     status = utility::filesystem::ChangeWorkingDirectory("..");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test_dir");
+    status = utility::filesystem::RemoveDirectory("test_dir");
     EXPECT_TRUE(status);
 
     status = utility::filesystem::ChangeWorkingDirectory("..");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test");
+    status = utility::filesystem::RemoveDirectory("test");
     EXPECT_TRUE(status);
 }
 
@@ -439,17 +446,17 @@ TEST(FileSystem, ListFilesInDirectory) {
         EXPECT_TRUE(status);
     }
 
-    // clean-up in reverse order, DeleteDirectory can delete one dir at a time.
+    // clean-up in reverse order, RemoveDirectory can delete one dir at a time.
     status = utility::filesystem::ChangeWorkingDirectory("..");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test_dir");
+    status = utility::filesystem::RemoveDirectory("test_dir");
     EXPECT_TRUE(status);
 
     status = utility::filesystem::ChangeWorkingDirectory("..");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test");
+    status = utility::filesystem::RemoveDirectory("test");
     EXPECT_TRUE(status);
 }
 
@@ -493,17 +500,17 @@ TEST(FileSystem, ListFilesInDirectoryWithExtension) {
         EXPECT_TRUE(status);
     }
 
-    // clean-up in reverse order, DeleteDirectory can delete one dir at a time.
+    // clean-up in reverse order, RemoveDirectory can delete one dir at a time.
     status = utility::filesystem::ChangeWorkingDirectory("..");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test_dir");
+    status = utility::filesystem::RemoveDirectory("test_dir");
     EXPECT_TRUE(status);
 
     status = utility::filesystem::ChangeWorkingDirectory("..");
     EXPECT_TRUE(status);
 
-    status = utility::filesystem::DeleteDirectory("test");
+    status = utility::filesystem::RemoveDirectory("test");
     EXPECT_TRUE(status);
 }
 
